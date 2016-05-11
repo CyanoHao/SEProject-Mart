@@ -1,15 +1,13 @@
-# 数据库
+# Database
 
-数据库使用 MariaDB 5.5+ 或 MySQL 5.5+.
+The DBMS used in this project is MariaDB 5.5+ or MySQL 5.5+.
 
-* 部署在 Linux 或 BSD 上时, 推荐跟随发行版的默认选择.
+* It is recommended to follow the distro's default DBMS (usually MariaDB) on Linux / BSD.
 
-* 部署在 Windows 上时, 推荐使用 MySQL 以便将来获得商业支持.
+* It is recommended to use MySQL on Windows to get commercial support later.
 
-* 不推荐部署在其它操作系统上
+* It is _not_ recommended to deploy on other OSes.
 
+## Files
 
-
-## 文件列表
-
-* create.sql 创建表脚本
+* `create.sql` script for creating tables
