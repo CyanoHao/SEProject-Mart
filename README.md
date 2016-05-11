@@ -2,7 +2,7 @@
 
 ## 文件列表
 
-* client/* 客户端程序文件
-* database/* 数据库相关文件
-* server/* 服务器程序文件
-* testing/* 测试相关文件
+* `client/*` 客户端程序文件
+* `database/*` 数据库相关文件
+* `server/*` 服务器程序文件
+* `testing/*` 测试相关文件
