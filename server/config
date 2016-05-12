@@ -1,0 +1,14 @@
+#服务器配置文件
+[server]
+server_ip=127.0.0.1
+server_port=10001
+
+[db]
+db_host=devel.cyano.cn
+db_port=3306
+db_name=mart
+db_password=mart
+db_login_name=mart
+
+[debug]
+debug=True
