@@ -26,6 +26,12 @@ CREATE TABLE `sale_detail` (
   `num` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `user` (
+  `name` varchar(32) NOT NULL,
+  `password` varchar(32) NOT NULL,
+  `priority` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`);
 
@@ -37,6 +43,9 @@ ALTER TABLE `sale`
 
 ALTER TABLE `sale_detail`
   ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`name`);
 
 ALTER TABLE `inventory`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
