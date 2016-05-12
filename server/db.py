@@ -20,6 +20,22 @@ class User(db.Model):
     priority = db.Column(db.Integer)
 
 
+# class Inventory(db.Model):
+#    __tablename__ = 'inventory'
+#    id = db.Column(db.Integer, primary_key=True)
+#    prod_id = db.Column(db.CHAR(13))
+#    num = db.Column(db.Integer)
+#    price = db.Column(db.Decimal(6, 2))
+#    date = db.Column(db.DateTime)
+
+
+# class Product(db.Model):
+#   __tablename__ = 'prod_info'
+#   id = db.Column(db.CHAR(13))
+#    name = db.Column(db.TINYTEXT)
+import time
+
+
 class DBHelper:
 
     def __init__(self, db):
@@ -30,18 +46,23 @@ class DBHelper:
         try:
             self._db.session.add(user)
             self._db.session.commit()
-#        except IntegrityError:
-#           return "Duplicate user name"
-        except Exception as e:
-            print type(e)
+        except Exception:
             return "Unknown error"
 
     def getUser(self, name):
         user = None
+        t0 = time.clock()
         try:
-            user = User.query.filter_by(name=name).one()
+            user = User.query.first()
         except Exception:
             pass
+        print time.clock() - t0
         return user
+
+    def getProductInfo(self, prod_id):
+        pass
+
+    def changeProduct(self, prod_id, new_name, new_price):
+        pass
 
 db_helper = DBHelper(db)
