@@ -1,3 +1,5 @@
+#! /usr/bin/env python2
+
 from auth import AuthHelper
 from db import app, db_helper, config_helper as ch
 
