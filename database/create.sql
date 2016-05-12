@@ -13,7 +13,7 @@ CREATE TABLE `prod_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `sale` (
-  `sale_id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `discount` decimal(6,2) NOT NULL DEFAULT '0.00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -33,7 +33,7 @@ ALTER TABLE `prod_info`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `sale`
-  ADD PRIMARY KEY (`sale_id`);
+  ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `sale_detail`
   ADD PRIMARY KEY (`id`);
@@ -42,7 +42,7 @@ ALTER TABLE `inventory`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `sale`
-  MODIFY `sale_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `sale_detail`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
