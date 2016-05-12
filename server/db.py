@@ -31,7 +31,7 @@ class User(db.Model):
 
 # class Product(db.Model):
 #   __tablename__ = 'prod_info'
-#   id = db.Column(db.CHAR(13))
+#    id = db.Column(db.CHAR(13))
 #    name = db.Column(db.TINYTEXT)
 import time
 
@@ -53,7 +53,7 @@ class DBHelper:
         user = None
         t0 = time.clock()
         try:
-            user = User.query.first()
+            user = User.query.filter_by(name=name).one()
         except Exception:
             pass
         print time.clock() - t0
