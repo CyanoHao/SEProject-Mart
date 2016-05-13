@@ -1,4 +1,5 @@
 import ConfigParser
+import sys, os
 
 
 class ServerConfig:
@@ -50,7 +51,7 @@ class ConfigHelper:
 
     def __init__(self, filename=None):
         if not filename:
-            filename = "config"
+            filename = self.get_config_filename()
         cp = ConfigParser.SafeConfigParser()
         cp.read(filename)
         try:
@@ -66,6 +67,17 @@ class ConfigHelper:
             print e.message
             print "There may be some error in config file."
             print "Some variables may use defualt value."
+
+    @staticmethod
+    def get_config_filename():
+        if os.path.isfile('/etc/mart/config'):
+            return '/etc/mart/config'
+        path = sys.path[0]
+        if os.path.isdir(path):
+            return path + '/config'
+        if os.path.isfile(path):
+            return os.path.dirname(path) + '/config'
+        return 'config'
 
     @property
     def server(self):
