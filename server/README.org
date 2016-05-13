@@ -16,7 +16,7 @@
   : http://[host:port]/
   host是主机,port是端口,待定
 ** 商品信息相关API
-   输入数据的格式在 [[file:product_example.json][product.example.json]] 中描述
+   输入数据的格式在 [[file:product.example.json][product.example.json]] 中描述
    | URL                           | 方法 | 权限要求 | 返回            | 描述               |
    |-------------------------------+------+----------+-----------------+--------------------|
    | /Mart/v1.0/product/add        | POST |        1 | 字符串'Success' | 增加多条商品信息   |
