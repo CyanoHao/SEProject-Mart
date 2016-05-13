@@ -2,9 +2,9 @@ from functools import wraps
 from flask import make_response, request, jsonify
 
 
-def error_handler(msg):
+def error_handler(msg, status=401):
     print msg
-    return make_response(jsonify({'error': msg}), 401)
+    return make_response(jsonify({'error': msg}), status)
 
 
 class AuthHelper:
