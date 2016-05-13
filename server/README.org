@@ -9,7 +9,7 @@
 
 * 更新记录
   1) 完成简单身份验证和基本框架 <2016-05-12 Thu>
-  2) 完成商品信息相关API <2016-05-13 Fri>
+  2) 完成商品信息相关API和出入库记录API <2016-05-13 Fri>
 
 * API
   所有的URL都要加上前缀 
@@ -21,8 +21,16 @@
    |-------------------------------+------+----------+-----------------+--------------------|
    | /Mart/v1.0/product/add        | POST |        1 | 字符串'Success' | 增加多条商品信息   |
    | /Mart/v1.0/product/update     | POST |        1 | 字符串'Success' | 更新多条商品信息   |
-   | /Mart/v1.0/product/get        | GET  |        2 | 格式和输入一致  | 获取所有商品信息   |
-   | /Mart/v1.0/product/get/<name> | GET  |        2 | 格式和输入一致  | 获取指定名字的商品 |
+   | /Mart/v1.0/product/get        | GET  |        2 | 格式和输入一致的商品记录 | 获取所有商品信息   |
+   | /Mart/v1.0/product/get/<name> | GET  |        2 | 格式和输入一致的商品记录 | 获取指定名字的商品 |
+
+** 出入库相关API
+   输入数据格式在 [[file:inventory.example.json][inventory.example.json]] 中描述
+   | URL                      | 方法 | 权限要求 | 返回                     | 描述               |
+   |--------------------------+------+----------+--------------------------+--------------------|
+   | /Mart/v1.0/inventory/add | POST |        1 | 字符串'Success'          | 增加多条出入库记录 |
+   | /Mart/v1.0/inventory/get | GET  |        0 | 格式和输入一致出入库记录 | 获取所有记录       |
+
 
 * Requirements
   : python2-flask

@@ -1,4 +1,5 @@
 #! /usr/bin/env python2
+# -*- coding:utf-8 -*-
 
 from auth import AuthHelper, error_handler
 from db import app, config_helper as ch, db_helper as dh
@@ -55,35 +56,36 @@ def updateProductInfo():
     json = request.json
     if not json:
         return error_handler("Need json data", 404)
-    t0 = time.clock()
     msg = dh.updateProductInfo(json)
     if msg:
         return error_handler(msg, 404)
-    print time.clock() - t0
     return "Success"
 
 # end--------------------商品信息相关API--------------------
 
-
-@app.route('/Mart/')
-@app.route('/Mart/v1.0/read-record')
-def read_record():
-    pass
+# begin--------------------交易记录相关API--------------------
 
 
-@app.route('/Mart/v1.0/write-record')
-def write_record():
-    pass
+@app.route('/Mart/v1.0/inventory/add', methods=['POST'])
+@auth.login_requied(1)
+def addInventoryRecord():
+    json = request.json
+    if not json:
+        return error_handler("Need json data", 404)
+    msg = dh.addInventoryRecord(json)
+    if msg:
+        return error_handler(msg, 404)
+    return "Success"
 
 
-@app.route('/Mart/v1.0/read-record/<id>')
-def read_record_with_id(id):
-    pass
+@app.route('/Mart/v.10/inventory/get', methods=['GET'])
+@auth.login_requied(0)
+def getInventoryRecord():
+    res = dh.getInventoryRecord()
+    if not isinstance(res, list):
+        return error_handler(res, 404)
+    return [i.toDict() for i in res]
 
-
-@app.route('/Mart/v1.0/write-record/<id>')
-def write_record_with_id(id):
-    pass
-
+# end--------------------交易记录相关API--------------------
 if __name__ == '__main__':
     app.run(host=ch.server.ip, port=ch.server.port, debug=ch.debug)

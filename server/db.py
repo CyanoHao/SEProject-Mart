@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from conf import ConfigHelper
@@ -18,13 +20,19 @@ class User(db.Model):
     priority = db.Column(db.Integer)
 
 
-# class Inventory(db.Model):
-#    __tablename__ = 'inventory'
-#    id = db.Column(db.Integer, primary_key=True)
-#    prod_id = db.Column(db.CHAR(13))
-#    num = db.Column(db.Integer)
-#    price = db.Column(db.Decimal(6, 2))
-#    date = db.Column(db.DateTime)
+class Inventory(db.Model):
+    __tablename__ = 'inventory'
+    id = db.Column(db.Integer, primary_key=True)
+    prod_id = db.Column(db.CHAR(13))
+    num = db.Column(db.Integer)
+    price = db.Column(db.Float(6, 2))
+    date = db.Column(db.DateTime)
+
+    def toDict(self):
+        return {
+            "prod_id": self.prod_id, "num": self.num,
+            "price": float(self.price), "date": self.date
+        }
 
 
 class Product(db.Model):
@@ -76,8 +84,8 @@ class DBHelper:
         ses = self._db.session
         print prod_list
         try:
-            ses.add_all([Product(id=k, **v)
-                         for k, v in prod_list.items()])
+            ses.execute(Product.__table__.insert(),
+                        [dict(id=k, **v) for k, v in prod_list.items()])
             ses.commit()
         except Exception as e:
             ses.rollback()
@@ -93,7 +101,26 @@ class DBHelper:
         except Exception as e:
             ses.rollback()
             return e.message
+
     # end--------------------商品信息相关API--------------------
+    # begin--------------------交易记录相关API--------------------
+
+    def addInventoryRecord(self, record_list):
+        ses = self._db.session
+        try:
+            ses.execute(Inventory.__table__.insert(), record_list)
+            ses.commit()
+        except Exception as e:
+            ses.rollback()
+            return e.message
+
+    def getInventoryRecord(self):
+        try:
+            return Inventory.query.all()
+        except Exception as e:
+            return e.message
+
+    # end--------------------交易记录相关API--------------------
 
 
 db_helper = DBHelper(db)

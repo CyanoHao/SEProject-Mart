@@ -1,3 +1,4 @@
 /server/*.pyc
 /server/config
-/server/data.json
+/server/product.json
+/server/inventory.json
