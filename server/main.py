@@ -2,20 +2,11 @@
 
 from auth import AuthHelper, error_handler
 from db import app, config_helper as ch, db_helper as dh
-from flask import request, make_response
+from flask import request, jsonify
+
+import time
 
 auth = AuthHelper(dh)
-
-
-@app.route('/')
-@auth.login_requied(0)
-def hello_world():
-    return "hello_world"
-
-
-@app.route('/about')
-def about_us():
-    pass
 
 
 @app.route('/register')
@@ -23,20 +14,58 @@ def about_us():
 def register():
     pass
 
+# begin--------------------商品信息相关API--------------------
+
+
+@app.route('/Mart/v1.0/product/get', methods=['GET'])
+@auth.login_requied(2)
+def getAllProduct():
+    res = dh.getAllProduct()
+    if not isinstance(res, list):
+        return error_handler(res, 404)
+    return jsonify(
+        {p.id: {"name": p.name, "price": float(p.price)} for p in res})
+
+
+@app.route('/Mart/v1.0/product/get/<name>', methods=['GET'])
+@auth.login_requied(2)
+def getProductByName(name):
+    res = dh.getProductByName(name)
+    if not isinstance(res, list):
+        return error_handler(res, 404)
+    return jsonify(
+        {p.id: {"name": p.name, "price": float(p.price)} for p in res})
+
 
 @app.route('/Mart/v1.0/product/add', methods=['POST'])
-def addProducts():
+@auth.login_requied(1)
+def addProductInfo():
     json = request.json
     if not json:
         return error_handler("Need json data", 404)
-    if not isinstance(json, list):
-        return error_handler("Wrong data format", 404)
-    msg = dh.addProducts(json)
+    msg = dh.addProductInfo(json)
     if msg:
-        return error_handler("error", 404)
+        return error_handler(msg, 404)
     return "Success"
 
 
+@app.route('/Mart/v1.0/product/update', methods=['POST'])
+@auth.login_requied(1)
+def updateProductInfo():
+    json = request.json
+    if not json:
+        return error_handler("Need json data", 404)
+    t0 = time.clock()
+    msg = dh.updateProductInfo(json)
+    if msg:
+        return error_handler(msg, 404)
+    print time.clock() - t0
+    return "Success"
+
+# end--------------------商品信息相关API--------------------
+
+
+@app.route('/Mart/')
 @app.route('/Mart/v1.0/read-record')
 def read_record():
     pass

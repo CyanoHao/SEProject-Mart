@@ -2,10 +2,6 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from conf import ConfigHelper
 
-#from mysql.connector.errors import IntegrityError
-
-#import time
-
 config_helper = ConfigHelper()
 
 app = Flask("SEProject-Mart")
@@ -62,41 +58,42 @@ class DBHelper:
             print e.message
         return user
 
-    def getProductInfo(self, prod_id):
-        prod = None
-        try:
-            prod = Product.query.filter_by(prod_id=prod_id).one()
-        except Exception as e:
-            print e.message
-        return prod
+    # begin--------------------商品信息相关API--------------------
 
-    def addProducts(self, prod_list):
-        ses = self._db.session
+    def getProductByName(self, name):
         try:
-            for info in prod_list:
-                ses.add(Product(**info))
+            return Product.query.filter_by(name=name).all()
+        except Exception as e:
+            return e.message
+
+    def getAllProduct(self):
+        try:
+            return Product.query.all()
+        except Exception as e:
+            return e.message
+
+    def addProductInfo(self, prod_list):
+        ses = self._db.session
+        print prod_list
+        try:
+            ses.add_all([Product(id=k, **v)
+                         for k, v in prod_list.items()])
             ses.commit()
-#        except IntegrityError:
-#            ses.rollback()
-#            return "Duplicate primary product id"
         except Exception as e:
             ses.rollback()
             return e.message
 
-    def addProduct(self, prod_id, name, price):
+    def updateProductInfo(self, prod_list):
         ses = self._db.session
-        prod = Product(id=prod_id, name=name, price=price)
         try:
-            ses.add(prod)
+            for k, v in prod_list.items():
+                ses.execute(Product.__table__.update().where(
+                    Product.id == k).values(**v))
             ses.commit()
-#        except IntegrityError:
-#            ses.rollback()
-#            return "Duplicate primary product id"
         except Exception as e:
             ses.rollback()
             return e.message
+    # end--------------------商品信息相关API--------------------
 
-    def changeProductInfo(self, prod_id, name=None, price=None):
-        pass
 
 db_helper = DBHelper(db)
