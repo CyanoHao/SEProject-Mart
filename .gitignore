@@ -1,3 +1,5 @@
 /server/*.pyc
 /server/config
 /server/data.json
+
+/client/out
