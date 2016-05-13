@@ -1,0 +1,8 @@
+[Unit]
+Description=Mart Server
+
+[Service]
+ExecStart=/usr/local/mart/main.py
+
+[Install]
+WantedBy=multi-user.target
