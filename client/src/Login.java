@@ -33,9 +33,8 @@ public class Login extends JFrame {
                 String username = inputUsername.getText();
                 String passwd = new String(inputPasswd.getPassword());
                 try {
-                    URI uri = new URIBuilder().setScheme("http").setUserInfo(username, passwd).setHost("localhost").setPort(10001).setPath("/").build();
+                    URI uri = new URIBuilder().setScheme("http").setUserInfo(username, passwd).setHost("localhost").setPort(10001).setPath("/Mart/v1.0/product/get").build();
                     HttpGet get = new HttpGet(uri);
-                    JOptionPane.showMessageDialog(null, uri, "URI", JOptionPane.INFORMATION_MESSAGE);
                     CloseableHttpResponse response = Main.http.execute(get);
                     JOptionPane.showMessageDialog(null, response, "服务器返回结果", JOptionPane.INFORMATION_MESSAGE);
                     JOptionPane.showMessageDialog(null, EntityUtils.toString(response.getEntity()), "服务器返回内容", JOptionPane.INFORMATION_MESSAGE);
