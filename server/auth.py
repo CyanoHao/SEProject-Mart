@@ -37,3 +37,11 @@ class AuthHelper:
                 return f(*args, **kw)
             return decorated
         return decorator
+
+    def login_check(self):
+        auth = request.authorization
+        if not auth:
+            return None
+        user = self.dh.getUser(auth.username)
+        if user and user.password == auth.password:
+            return user.priority

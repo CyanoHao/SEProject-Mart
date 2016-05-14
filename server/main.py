@@ -9,11 +9,15 @@ import time
 
 auth = AuthHelper(dh)
 
+# 验证身份
 
-@app.route('/register')
-@auth.login_requied(0)
-def register():
-    pass
+
+@app.route('/Mart/v1.0/auth')
+def autorization():
+    priority = auth.login_check()
+    if priority:
+        return jsonify({"priority": priority})
+    return error_handler("Login failed", 401)
 
 # begin--------------------商品信息相关API--------------------
 
