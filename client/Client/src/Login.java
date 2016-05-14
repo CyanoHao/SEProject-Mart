@@ -2,17 +2,15 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 
 public class Login extends JFrame {
@@ -46,12 +44,19 @@ public class Login extends JFrame {
                     int responseCode = response.getStatusLine().getStatusCode();
                     switch (responseCode) {
                         case 200:
+                            JSONObject res = new JSONObject(EntityUtils.toString(response.getEntity()));
                             JOptionPane.showMessageDialog(
                                     null,
-                                    EntityUtils.toString(response.getEntity()),
+                                    "权限: " + res.getInt("priority"),
                                     "登录成功",
                                     JOptionPane.INFORMATION_MESSAGE
                             );
+                            Main.username = username;
+                            Main.passwd = passwd;
+                            Main.priority = res.getInt("priority");
+
+                            Navi navi = new Navi();
+
                             break;
                         case 401:
                             JOptionPane.showMessageDialog(
