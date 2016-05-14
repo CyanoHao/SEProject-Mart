@@ -2,3 +2,5 @@
 /server/config
 /server/product.json
 /server/inventory.json
+
+/client/out
