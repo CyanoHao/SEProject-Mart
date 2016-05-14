@@ -5,7 +5,7 @@ from auth import AuthHelper, error_handler
 from db import app, config_helper as ch, db_helper as dh
 from flask import request, jsonify
 
-import time
+#import time
 
 auth = AuthHelper(dh)
 
@@ -15,7 +15,7 @@ auth = AuthHelper(dh)
 @app.route('/Mart/v1.0/auth')
 def autorization():
     priority = auth.login_check()
-    if priority:
+    if priority != None:
         return jsonify({"priority": priority})
     return error_handler("Login failed", 401)
 
