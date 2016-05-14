@@ -33,12 +33,49 @@ public class Login extends JFrame {
                 String username = inputUsername.getText();
                 String passwd = new String(inputPasswd.getPassword());
                 try {
-                    URI uri = new URIBuilder().setScheme("http").setUserInfo(username, passwd).setHost("localhost").setPort(10001).setPath("/Mart/v1.0/product/get").build();
+                    URI uri = new URIBuilder()
+                            .setScheme("http")
+                            .setUserInfo(username, passwd)
+                            .setHost("localhost")
+                            .setPort(10001)
+                            .setPath("/Mart/v1.0/auth")
+                            .build();
                     HttpGet get = new HttpGet(uri);
                     CloseableHttpResponse response = Main.http.execute(get);
-                    JOptionPane.showMessageDialog(null, response, "服务器返回结果", JOptionPane.INFORMATION_MESSAGE);
-                    JOptionPane.showMessageDialog(null, EntityUtils.toString(response.getEntity()), "服务器返回内容", JOptionPane.INFORMATION_MESSAGE);
+
+                    int responseCode = response.getStatusLine().getStatusCode();
+                    switch (responseCode) {
+                        case 200:
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    EntityUtils.toString(response.getEntity()),
+                                    "登录成功",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            break;
+                        case 401:
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "用户名或密码错误",
+                                    "登录失败",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    String.format(
+                                            "服务器错误\n错误代码: %d\n错误信息: %s",
+                                            responseCode,
+                                            response.getStatusLine().getReasonPhrase()
+                                    ),
+                                    "服务器错误",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            break;
+                    }
                 } catch (URISyntaxException ex) {
+                    /* do nothing */
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null, "无法连接服务器", "无法连接服务器", JOptionPane.ERROR_MESSAGE);
                 }
