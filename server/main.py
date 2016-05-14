@@ -12,10 +12,10 @@ auth = AuthHelper(dh)
 # 验证身份
 
 
-@app.route('/Mart/v1.0/auth')
+@app.route('/Mart/v1.0/auth', methods=['GET'])
 def autorization():
     priority = auth.login_check()
-    if priority != None:
+    if priority is not None:
         return jsonify({"priority": priority})
     return error_handler("Login failed", 401)
 
