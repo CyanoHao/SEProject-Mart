@@ -12,6 +12,6 @@ public class Main {
     static int priority = -1;
 
     static public void main(String []args) {
-        Login login = new Login();
+        new Navi();
     }
 }

@@ -13,7 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 
-public class Login extends JFrame {
+class Login extends JFrame {
 
     private JPanel panel = new JPanel();
     private JTextField inputUsername = new JTextField();
@@ -22,8 +22,11 @@ public class Login extends JFrame {
     private JLabel labelPasswd = new JLabel();
     private JLabel labelUsername = new JLabel();
 
-    public Login() {
+    private Navi navi;
+
+    Login(Navi navi) {
         super("商场管理系统: 请登录");
+        this.navi = navi;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         buttonLogin.addActionListener(new ActionListener() {
             @Override
@@ -45,18 +48,13 @@ public class Login extends JFrame {
                     switch (responseCode) {
                         case 200:
                             JSONObject res = new JSONObject(EntityUtils.toString(response.getEntity()));
-                            JOptionPane.showMessageDialog(
-                                    null,
-                                    "权限: " + res.getInt("priority"),
-                                    "登录成功",
-                                    JOptionPane.INFORMATION_MESSAGE
-                            );
                             Main.username = username;
                             Main.passwd = passwd;
                             Main.priority = res.getInt("priority");
 
-                            Navi navi = new Navi();
-
+                            Login login = (Login)((JButton)e.getSource()).getRootPane().getParent();
+                            login.setVisible(false);
+                            login.navi.setVisible(true);
                             break;
                         case 401:
                             JOptionPane.showMessageDialog(
