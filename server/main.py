@@ -112,11 +112,8 @@ def addSaleRecord():
     sale_list = []
     sale_detail_list = []
     try:
-        for k, s in json.items():
-            sale_list.append({'id': k, 'date': s[
-                'date'], 'discount': s['discount']})
-            sale_detail_list.extend([dict(sale_id=k, **sd)
-                                     for sd in s['detail']])
+        sale_list.append({'discount': json['discount']})
+        sale_detail_list.extend(json['detail'])
     except Exception:
         return error_handler("Wrong data format", 404)
     msg = dh.addSaleRecord(sale_list, sale_detail_list)

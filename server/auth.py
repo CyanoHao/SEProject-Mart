@@ -5,7 +5,8 @@ from flask import make_response, request, jsonify
 def error_handler(msg, status=401):
     print msg
     res = make_response(jsonify({'error': msg}), status)
-    res.headers['WWW-Authenticate'] = 'Basic realm=""'
+    if status == 401:
+        res.headers['WWW-Authenticate'] = 'Basic realm=""'
     return res
 
 class AuthHelper:

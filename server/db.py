@@ -37,7 +37,7 @@ class Inventory(db.Model):
 
 class Sale(db.Model):
     __tablename__ = 'sale'
-    id = db.Column(db.CHAR(11), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime)
     discount = db.Column(db.Float(6, 2))
 
@@ -47,7 +47,7 @@ class SaleDetail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     prod_id = db.Column(db.CHAR(13))
     price = db.Column(db.Float(6, 2))
-    sale_id = db.Column(db.CHAR(11))
+    sale_id = db.Column(db.Integer)
     num = db.Column(db.Integer)
 
 
@@ -149,11 +149,16 @@ class DBHelper:
         ses = self._db.session
         try:
             ses.execute(Sale.__table__.insert(), sale_list)
+            sale_id = ses.query("@@IDENTITY").first()[0] # type: class 'int'
+            for sd in sale_detail_list:
+                sd["sale_id"] = sale_id
             ses.execute(SaleDetail.__table__.insert(), sale_detail_list)
             ses.commit()
         except Exception as e:
             ses.rollback()
             return e.message
+        finally:
+            ses.close()
 
     def getSaleRecord(self, start, end=None):
         ses = self._db.session
