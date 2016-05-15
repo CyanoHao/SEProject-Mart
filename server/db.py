@@ -35,6 +35,22 @@ class Inventory(db.Model):
         }
 
 
+class Sale(db.Model):
+    __tablename__ = 'sale'
+    id = db.Column(db.CHAR(11), primary_key=True)
+    date = db.Column(db.DateTime)
+    discount = db.Column(db.Float(6, 2))
+
+
+class SaleDetail(db.Model):
+    __tablename__ = 'sale_detail'
+    id = db.Column(db.Integer, primary_key=True)
+    prod_id = db.Column(db.CHAR(13))
+    price = db.Column(db.Float(6, 2))
+    sale_id = db.Column(db.CHAR(11))
+    num = db.Column(db.Integer)
+
+
 class Product(db.Model):
     __tablename__ = 'prod_info'
     id = db.Column(db.CHAR(13), primary_key=True)
@@ -74,6 +90,12 @@ class DBHelper:
         except Exception as e:
             return e.message
 
+    def getProductById(self, id):
+        try:
+            return Product.query.filter_by(id=id).one()
+        except Exception as e:
+            return e.message
+
     def getAllProduct(self):
         try:
             return Product.query.all()
@@ -103,7 +125,7 @@ class DBHelper:
             return e.message
 
     # end--------------------商品信息相关API--------------------
-    # begin--------------------交易记录相关API--------------------
+    # begin--------------------入库记录相关API--------------------
 
     def addInventoryRecord(self, record_list):
         ses = self._db.session
@@ -120,7 +142,34 @@ class DBHelper:
         except Exception as e:
             return e.message
 
-    # end--------------------交易记录相关API--------------------
+    # end--------------------入库记录相关API--------------------
+    # begin--------------------交易记录相关API--------------------
 
+    def addSaleRecord(self, sale_list, sale_detail_list):
+        ses = self._db.session
+        try:
+            ses.execute(Sale.__table__.insert(), sale_list)
+            ses.execute(SaleDetail.__table__.insert(), sale_detail_list)
+            ses.commit()
+        except Exception as e:
+            ses.rollback()
+            return e.message
+
+    def getSaleRecord(self, start, end=None):
+        ses = self._db.session
+        filter_args = [Sale.id == SaleDetail.sale_id, Sale.date > start]
+        if end:
+            filter_args.append(Sale.Date < end)
+        try:
+            return ses.query(Sale.id,
+                             Sale.date,
+                             Sale.discount,
+                             SaleDetail.num,
+                             SaleDetail.price,
+                             SaleDetail.prod_id).filter(*filter_args).all()
+        except Exception as e:
+            print e.message
+
+    # end--------------------交易记录相关API--------------------
 
 db_helper = DBHelper(db)

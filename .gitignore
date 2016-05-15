@@ -2,5 +2,6 @@
 /server/config
 /server/product.json
 /server/inventory.json
+/server/sale.json
 
 /client/out
