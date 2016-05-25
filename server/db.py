@@ -71,7 +71,7 @@ class DBHelper:
             ses.commit()
         except Exception as e:
             print e.message
-            ses.rollback
+            ses.rollback()
             return True
 
     def getUser(self, name):

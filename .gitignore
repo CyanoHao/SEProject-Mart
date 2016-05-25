@@ -5,3 +5,6 @@
 /server/sale.json
 
 /client/out
+
+# KDE Files
+.directory
