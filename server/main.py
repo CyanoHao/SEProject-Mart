@@ -104,6 +104,7 @@ def getInventoryRecord():
 
 # begin--------------------库存相关API--------------------
 
+
 @app.route('/Mart/v1.0/inventory/count', methods=['GET'])
 @auth.login_requied(1)
 def getInventoryCount():
@@ -148,26 +149,33 @@ def addSaleRecord():
 @auth.login_requied(1)
 def getSaleRecord():
     json = request.json
+    orderby_date = request.args.get('orderby_date', None)
     if not json or 'start' not in json:
         return error_handler("Need json data or Wrong format", 404)
-    res = dh.getSaleRecord(json['start'], json.get('end', None))
+    res = dh.getSaleRecord(json['start'], json.get('end', None), orderby_date)
     if not isinstance(res, list):
         return error_handler(res, 404)
-    result = {}
+    result = []
     for r in res:
-        s = result.get(r[0], None)
-        if s:
-            s['detail'].append(
-                {'prod_id': r[5], 'num': r[3], 'price': float(r[4])})
+        item = None
+        for it in result:
+            if it['id'] == r[0]:
+                item = it
+                break
+        if not item:
+            item = {'id': r[0],
+                    'date': str(r[1]),
+                    'discount': float(r[2]),
+                    'detail': [
+                {
+                    'prod_id': r[5], 'num': r[3], 'price': float(r[4])
+                }
+            ]}
         else:
-            result[r[0]] = {
-                'date': str(r[1]),
-                'discount': float(r[2]),
-                'detail': [
-                    {'prod_id': r[5], 'num': r[3], 'price': float(r[4])}
-                ]
-            }
-    return jsonify(result)
+            item['detail'].append(
+                {'prod_id': r[5], 'num': r[3], 'price': float(r[4])})
+        result.append(item)
+    return jsonify({'sale_list': result})
 
 # end--------------------交易记录相关API--------------------
 

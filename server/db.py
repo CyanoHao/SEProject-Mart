@@ -149,7 +149,7 @@ class DBHelper:
         ses = self._db.session
         try:
             ses.execute(Sale.__table__.insert(), sale_list)
-            sale_id = ses.query("@@IDENTITY").first()[0] # type: class 'int'
+            sale_id = ses.query("@@IDENTITY").first()[0]  # type: class 'int'
             for sd in sale_detail_list:
                 sd["sale_id"] = sale_id
             ses.execute(SaleDetail.__table__.insert(), sale_detail_list)
@@ -160,18 +160,23 @@ class DBHelper:
         finally:
             ses.close()
 
-    def getSaleRecord(self, start, end=None):
+    def getSaleRecord(self, start, end=None, orderby_date=None):
         ses = self._db.session
         filter_args = [Sale.id == SaleDetail.sale_id, Sale.date > start]
         if end:
             filter_args.append(Sale.Date < end)
         try:
-            return ses.query(Sale.id,
-                             Sale.date,
-                             Sale.discount,
-                             SaleDetail.num,
-                             SaleDetail.price,
-                             SaleDetail.prod_id).filter(*filter_args).all()
+            tmp = ses.query(Sale.id,
+                            Sale.date,
+                            Sale.discount,
+                            SaleDetail.num,
+                            SaleDetail.price,
+                            SaleDetail.prod_id).filter(*filter_args)
+            if orderby_date == 'inc':
+                tmp = tmp.order_by(Sale.date)
+            elif orderby_date == 'desc':
+                tmp = tmp.order_by(Sale.date.desc())
+            return tmp.all()
         except Exception as e:
             print e.message
 
