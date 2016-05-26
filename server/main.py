@@ -91,15 +91,37 @@ def addInventoryRecord():
     return "Success"
 
 
-@app.route('/Mart/v.10/inventory/get', methods=['GET'])
+@app.route('/Mart/v1.0/inventory/get', methods=['GET'])
 @auth.login_requied(0)
 def getInventoryRecord():
     res = dh.getInventoryRecord()
     if not isinstance(res, list):
         return error_handler(res, 404)
-    return [i.toDict() for i in res]
+    return jsonify(
+        {p.id: {"prod_id": p.prod_id, "num": p.num, "price": float(p.price), "date": p.date} for p in res})
 
 # end--------------------入库记录相关API--------------------
+
+# begin--------------------库存相关API--------------------
+
+@app.route('/Mart/v1.0/inventory/count', methods=['GET'])
+@auth.login_requied(1)
+def getInventoryCount():
+    res = dh.getInventoryRecord()
+    if not isinstance(res, list):
+        return error_handler(res, 404)
+    count = {}
+    for p in res:
+        if p.prod_id in count.keys():
+            count[p.prod_id] = count[p.prod_id] + p.num
+        else:
+            count[p.prod_id] = p.num
+    print count
+    return jsonify(
+        {k: {"count": count[k]} for k in count})
+
+# end--------------------库存相关API--------------------
+
 # begin--------------------交易记录相关API--------------------
 
 
