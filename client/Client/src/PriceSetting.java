@@ -129,8 +129,11 @@ public class PriceSetting extends JFrame {
 	    });
 	    
 	    btnPrint.addActionListener(e->{
-	    	PricePrinter printer=new PricePrinter(tableModel);
-	    	printer.makePrinting();
+	    	new Thread(()->{
+		    	PricePrinter printer=new PricePrinter(tableModel);
+		    	printer.makePrinting();
+	    	}).start();
+
 	    });
 	}
 	

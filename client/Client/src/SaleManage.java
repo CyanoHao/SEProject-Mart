@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 
@@ -29,6 +30,7 @@ public class SaleManage extends JFrame {
 	private JButton btnSale;
 	private JLabel lbnList;
 	private JLabel lblTotal;
+	private UneditableTableModel tableModel;
 
 	public SaleManage() {
 		setTitle("前台管理");
@@ -43,9 +45,11 @@ public class SaleManage extends JFrame {
 		panel.setBounds(28, 44, 276, 232);
 		contentPane.add(panel);
 		
-		String[] colNames={"商品名","单位价格"};
+		String[] colNames={"ID","商品名","售价"};
 		Object[][] items={};
-		saleTable = new JTable(items,colNames);
+		tableModel = new UneditableTableModel(items,colNames);
+		saleTable = new JTable(tableModel);
+		saleTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		saleTable.setPreferredScrollableViewportSize(new Dimension(panel.getWidth(),panel.getHeight()));
 		saleTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 		saleTable.getColumnModel().getColumn(0).setPreferredWidth((int)(panel.getWidth()*5.0/10.0));
@@ -107,6 +111,17 @@ public class SaleManage extends JFrame {
 	    lblTotal.setFont(new Font("宋体", Font.PLAIN, 12));
 	    lblTotal.setBounds(542, 19, 113, 15);
 	    contentPane.add(lblTotal);
+	    
+	    btnPrint.addActionListener(e->{
+	    	new Thread(()->{
+		    	PricePrinter printer=new PricePrinter(tableModel);
+		    	printer.makePrinting();
+	    	}).start();
+
+	    });
+	    
+	    RefreshProductThread rpt=new RefreshProductThread(this.tableModel);
+	    rpt.start();
 	}
 
 }

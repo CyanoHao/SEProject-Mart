@@ -60,7 +60,7 @@ public class PricePrinter implements Printable {
         try {  
             job.print();  
         } catch (PrinterException e) {  
-        	e.printStackTrace();  
+        	//e.printStackTrace();  
         }  
   
     }  
