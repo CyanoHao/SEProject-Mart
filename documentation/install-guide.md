@@ -79,16 +79,32 @@ yum install python-flask python-sqlalchemy mysql-connector-python
 
 #### 准备运行环境
 
-##### 1. 安装操作系统.
+1. 安装操作系统.
 
-##### 2. 安装 Java Runtime Environment 8.
+2. 安装 Java Runtime Environment 8.
 
 #### 安装客户端程序
+
+* Ubuntu 16.04 LTS 或 CentOS 7.2: 创建一个 shell 脚本并添加可执行权限:
+```
+#! /bin/bash
+java /path/to/client
+```
+也可以创建一个 `.desktop` 启动器.
+
+* Windows:
+创建一个 cmd 脚本:
+```
+/path/to/java /path/to/client
+```
+也可以创建一个快捷方式.
 
 ## 初始化配置
 
 ### 数据库配置
 
 ### 服务端配置
+
+把 /usr/local/mart/config.example 复制到 /etc/mart/config, 然后按需修改服务器及数据库配置.
 
 ### 客户端配置
