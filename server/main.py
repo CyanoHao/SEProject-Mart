@@ -90,11 +90,11 @@ def getCounterCount():
         return error_handler(sale_rec, 404)
     count = {}
     for p in inventory_rec:
-        if p.num < 0:  ## 出库的
+        if p.num < 0:  ## 出库的为负
             if p.prod_id in count.keys():
-                count[p.prod_id] = count[p.prod_id] + p.num
+                count[p.prod_id] = count[p.prod_id] - p.num
             else:
-                count[p.prod_id] = p.num
+                count[p.prod_id] = -p.num
     for p in sale_rec:
         if p.prod_id in count.keys():
             count[p.prod_id] = count[p.prod_id] - p.num
