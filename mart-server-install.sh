@@ -7,6 +7,10 @@ then
 fi
 
 # copy server files
+if [ -d /usr/local/mart ]
+then
+	rm -rf /usr/local/mart
+fi
 cp -Rf ./server /usr/local/mart
 
 # make it a systemd service
