@@ -37,7 +37,7 @@ class Login extends JFrame {
                     URI uri = new URIBuilder()
                             .setScheme("http")
                             .setUserInfo(username, passwd)
-                            .setHost("localhost")
+                            .setHost("devel.cyano.cn")
                             .setPort(10001)
                             .setPath("/Mart/v1.0/auth")
                             .build();
