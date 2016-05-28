@@ -100,17 +100,17 @@ public class PriceSetting extends JFrame {
 	    	this.dispatchEvent(new WindowEvent(this,WindowEvent.WINDOW_CLOSING) );
 	    });
 	    
-	    saleLabel = new JLabel("前台商品表");
+	    saleLabel = new JLabel("商品清单");
 	    saleLabel.setFont(new Font("宋体", Font.PLAIN, 12));
 	    saleLabel.setBounds(127, 12, 74, 15);
 	    contentPane.add(saleLabel);
 	    
-	    btnPrint = new JButton("打印商品表");
+	    btnPrint = new JButton("打印定价表");
 	    btnPrint.setFont(new Font("宋体", Font.PLAIN, 11));
 	    btnPrint.setBounds(10, 151, 93, 23);
 	    contentPane.add(btnPrint);
 	    
-	    RefreshProductThread rpt=new RefreshProductThread(this.tableModel);
+	    RefreshProductThread rpt=new RefreshProductThread(this.tableModel,false);
 	    rpt.start();
 	    
 	    btnChangePrice.addActionListener(e->{
@@ -155,9 +155,11 @@ class UneditableTableModel extends DefaultTableModel{
 
 class RefreshProductThread extends Thread{
 	private UneditableTableModel tableModel;
-	RefreshProductThread(UneditableTableModel utm){
+	private boolean filter;
+	RefreshProductThread(UneditableTableModel utm,boolean filter){
 		super();
 		this.tableModel=utm;
+		this.filter=filter;
 	}
 	public void run(){
     	try {
@@ -182,8 +184,15 @@ class RefreshProductThread extends Thread{
 			JSONArray productJSONArray=(JSONArray) jsonTokener.nextValue(); 
 			for(int i=0;i<productJSONArray.length();i++){
 				JSONObject jo=productJSONArray.getJSONObject(i);
-				Object[] newItem={jo.getString("id"),jo.getString("name"),PriceSetting.modifyPrice(new Double(jo.getDouble("price")))};
-				tableModel.addRow(newItem);
+				if(filter==false){
+					Object[] newItem={jo.getString("id"),jo.getString("name"),PriceSetting.modifyPrice(new Double(jo.getDouble("price")))};				
+					tableModel.addRow(newItem);
+				}
+				else{
+					//TODO get count info from api now 100
+					Object[] newItem={jo.getString("id"),jo.getString("name"),PriceSetting.modifyPrice(new Double(jo.getDouble("price"))),new Double(100.0).toString()};	
+					tableModel.addRow(newItem);
+				}	
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

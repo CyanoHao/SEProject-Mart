@@ -62,31 +62,33 @@ public class SaleManage extends JFrame {
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(28, 44, 276, 232);
+		panel.setBounds(10, 44, 294, 232);
 		contentPane.add(panel);
 		
-		String[] colNames={"ID","商品名","售价"};
+		String[] colNames={"ID","商品名","售价","剩余数量"};
 		Object[][] items={};
 		tableModel = new UneditableTableModel(items,colNames);
 		saleTable = new JTable(tableModel);
 		saleTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		saleTable.setPreferredScrollableViewportSize(new Dimension(panel.getWidth(),panel.getHeight()));
 		saleTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-		saleTable.getColumnModel().getColumn(0).setPreferredWidth((int)(panel.getWidth()*5.0/10.0));
-		saleTable.getColumnModel().getColumn(1).setPreferredWidth((int)(panel.getWidth()*5.0/10.0));
+		saleTable.getColumnModel().getColumn(0).setPreferredWidth((int)(panel.getWidth()*3.0/10.0));
+		saleTable.getColumnModel().getColumn(1).setPreferredWidth((int)(panel.getWidth()*3.0/10.0));
+		saleTable.getColumnModel().getColumn(2).setPreferredWidth((int)(panel.getWidth()*2.0/10.0));
+		saleTable.getColumnModel().getColumn(3).setPreferredWidth((int)(panel.getWidth()*2.0/10.0));
 	    panel.setLayout(null);
 	    scrollPane=new JScrollPane(saleTable);
 	    scrollPane.setBounds(0,0,panel.getWidth(),panel.getHeight());
 	    panel.add(scrollPane);
 	    
-	    btnPrint = new JButton("打印商品表");
+	    btnPrint = new JButton("打印前台表");
 	    btnPrint.setFont(new Font("宋体", Font.PLAIN, 12));
 	    btnPrint.setBounds(93, 286, 127, 23);
 	    contentPane.add(btnPrint);
 	    
-	    lblGoods = new JLabel("商品表");
+	    lblGoods = new JLabel("前台商品");
 	    lblGoods.setFont(new Font("宋体", Font.PLAIN, 12));
-	    lblGoods.setBounds(28, 19, 54, 15);
+	    lblGoods.setBounds(10, 19, 54, 15);
 	    contentPane.add(lblGoods);
 	    
 	    btnImport = new JButton("->");
@@ -141,13 +143,13 @@ public class SaleManage extends JFrame {
 	    
 	    btnPrint.addActionListener(e->{
 	    	new Thread(()->{
-		    	PricePrinter printer=new PricePrinter(tableModel);
+	    		FrontierPrinter printer=new FrontierPrinter(tableModel);
 		    	printer.makePrinting();
 	    	}).start();
 
 	    });
 	    
-	    RefreshProductThread rpt=new RefreshProductThread(this.tableModel);
+	    RefreshProductThread rpt=new RefreshProductThread(this.tableModel,true);
 	    rpt.start();
 	    
 	    btnImport.addActionListener(e->{

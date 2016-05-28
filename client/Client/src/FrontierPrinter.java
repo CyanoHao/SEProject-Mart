@@ -8,9 +8,9 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;  
 import java.awt.print.PrinterJob;  
   
-public class PricePrinter implements Printable {  
+public class FrontierPrinter implements Printable {  
 	private UneditableTableModel tableModel;
-	PricePrinter(UneditableTableModel utm){
+	FrontierPrinter(UneditableTableModel utm){
 		this.tableModel=utm;
 	}
     @Override  
@@ -22,15 +22,15 @@ public class PricePrinter implements Printable {
   
         Graphics2D g2d = (Graphics2D) g;  
         g2d.setFont(new Font("宋体", Font.BOLD, 16));  
-        g2d.drawString("商品价格表", 100, 15);
+        g2d.drawString("前台商品清单", 140, 15);
         g2d.setFont(new Font("宋体", Font.PLAIN, 14)); 
-        g2d.drawString("-------------------------------------", 7, 25);
-        g2d.drawString("商品ID    商品名    单价",7,35);
+        g2d.drawString("-------------------------------------------------", 7, 25);
+        g2d.drawString("商品ID         商品名      单价      剩余数量",7,35);
         for(int i=0;i<this.tableModel.getRowCount();i++){
-        	String info=(String) this.tableModel.getValueAt(i,0)+"    "+this.tableModel.getValueAt(i,1)+"    "+this.tableModel.getValueAt(i,2);
+        	String info=(String) this.tableModel.getValueAt(i,0)+"    "+this.tableModel.getValueAt(i,1)+"    "+this.tableModel.getValueAt(i,2)+"    "+this.tableModel.getValueAt(i,3);
         	g2d.drawString(info,7,35+15*(i+1));
         }
-        g2d.drawString("-------------------------------------", 7, 35+15*(this.tableModel.getRowCount()+1));
+        g2d.drawString("-------------------------------------------------", 7, 35+15*(this.tableModel.getRowCount()+1));
         return PAGE_EXISTS;  
     }  
   
@@ -47,12 +47,12 @@ public class PricePrinter implements Printable {
   
         // 通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。  
         Paper p = new Paper();  
-        p.setSize(330, height);  
-        p.setImageableArea(5, -20, 330, height + 20);  
+        p.setSize(380, height);  
+        p.setImageableArea(5, -20, 380, height + 20);  
         pf.setPaper(p);  
   
         // 把 PageFormat 和 Printable 添加到书中，组成一个页面  
-        book.append(new PricePrinter(this.tableModel), pf);  
+        book.append(new FrontierPrinter(this.tableModel), pf);  
   
         // 获取打印服务对象  
         PrinterJob job = PrinterJob.getPrinterJob();  
