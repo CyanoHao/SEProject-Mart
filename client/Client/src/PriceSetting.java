@@ -182,6 +182,21 @@ class RefreshProductThread extends Thread{
 			String jsonString='['+jsonEditer.matcher(jsonStringBuilder.toString()).replaceAll("  {\n    \"id\": \"$1\", ")+']';
 			JSONTokener jsonTokener = new JSONTokener(jsonString);
 			JSONArray productJSONArray=(JSONArray) jsonTokener.nextValue(); 
+			
+            URI uriCounter = new URIBuilder()
+        		.setScheme("http")
+        		.setUserInfo(Main.username, Main.passwd)
+        		.setHost("devel.cyano.cn")
+        		.setPort(10001)
+        		.setPath("/Mart/v1.0/counter/count")
+        		.build();
+            HttpGet getCount=new HttpGet(uriCounter);
+            CloseableHttpClient httpCount = HttpClients.createDefault();
+            CloseableHttpResponse responseCount=httpCount.execute(getCount);
+            HttpEntity entityCount=responseCount.getEntity();
+            StringBuilder jsonStringBuilderCount=new StringBuilder(EntityUtils.toString(entityCount));
+            JSONObject counterJo=(JSONObject) new JSONTokener(jsonStringBuilderCount.toString()).nextValue();
+			
 			for(int i=0;i<productJSONArray.length();i++){
 				JSONObject jo=productJSONArray.getJSONObject(i);
 				if(filter==false){
@@ -190,8 +205,11 @@ class RefreshProductThread extends Thread{
 				}
 				else{
 					//TODO get count info from api now 100
-					Object[] newItem={jo.getString("id"),jo.getString("name"),PriceSetting.modifyPrice(new Double(jo.getDouble("price"))),new Double(100.0).toString()};	
-					tableModel.addRow(newItem);
+					String id=jo.getString("id");
+					if(counterJo.has(id) && counterJo.getJSONObject(id).getDouble("count")>0){
+						Object[] newItem={id,jo.getString("name"),PriceSetting.modifyPrice(new Double(jo.getDouble("price"))),counterJo.getJSONObject(id).getDouble("count")};	
+						tableModel.addRow(newItem);
+					}
 				}	
 			}
 		} catch (Exception e) {

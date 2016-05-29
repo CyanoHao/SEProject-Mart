@@ -55,6 +55,7 @@ class Login extends JFrame {
                             Login login = (Login)((JButton)e.getSource()).getRootPane().getParent();
                             login.setVisible(false);
                             login.navi.setVisible(true);
+                            
                             break;
                         case 401:
                             JOptionPane.showMessageDialog(

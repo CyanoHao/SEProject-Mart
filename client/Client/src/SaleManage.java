@@ -88,7 +88,7 @@ public class SaleManage extends JFrame {
 	    
 	    lblGoods = new JLabel("前台商品");
 	    lblGoods.setFont(new Font("宋体", Font.PLAIN, 12));
-	    lblGoods.setBounds(10, 19, 54, 15);
+	    lblGoods.setBounds(10, 19, 102, 15);
 	    contentPane.add(lblGoods);
 	    
 	    btnImport = new JButton("->");
@@ -174,16 +174,17 @@ public class SaleManage extends JFrame {
 	    	}
 	    	String amount=JOptionPane.showInputDialog(
 	    				null, 
-	    				"请输入商品销售数量(>0)", 
+	    				"请输入商品销售数量(0<数量<=剩余量)", 
 	    				"输入数量", 
 	    				JOptionPane.QUESTION_MESSAGE
 	    	);
+	    	Double currentLeft=Double.parseDouble(tableModel.getValueAt(rowNum, 3).toString());
 	    	Pattern pattern=Pattern.compile("^(?:[1-9][0-9]*(?:\\.[0-9]+)?|0\\.(?!0+$)[0-9]+)$");
 	    	Matcher matcher=pattern.matcher(amount);
-	    	if(!matcher.find()){
+	    	if(!(matcher.find() && Double.parseDouble(amount)<=currentLeft)){
                 JOptionPane.showMessageDialog(
                         null,
-                        "非法的销售数量(amount>0),请重试!",
+                        "非法的销售数量(0<数量<=剩余量),请重试!",
                         "错误",
                         JOptionPane.ERROR_MESSAGE
                 );
@@ -209,6 +210,9 @@ public class SaleManage extends JFrame {
 	    		rawTotalPrice+=price*Double.parseDouble(amount);
 	    		lblTotal.setText(String.format("折扣后金额: %.2f",rawTotalPrice*discount));
 	    	}
+	    	Double newLeft=currentLeft-Double.parseDouble(amount);
+	    	if(newLeft>0) tableModel.setValueAt(newLeft.toString(), rowNum, 3);
+	    	else tableModel.removeRow(rowNum);
 	    });
 	    
 	    //implement the button to configure discount rate
