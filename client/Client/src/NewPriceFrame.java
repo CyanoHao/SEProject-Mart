@@ -105,7 +105,7 @@ public class NewPriceFrame extends JFrame {
 							.setPath("/Mart/v1.0/product/update")
 							.build();
 						HttpPost postProducts=new HttpPost(postUri);
-						StringEntity se = new StringEntity(jo.toString());
+						StringEntity se = new StringEntity(jo.toString(),"utf-8");
 						se.setContentEncoding("UTF-8");
 						se.setContentType("application/json");
 						postProducts.setEntity(se);
