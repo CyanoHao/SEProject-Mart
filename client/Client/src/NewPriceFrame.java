@@ -62,9 +62,9 @@ public class NewPriceFrame extends JFrame {
 		btnCancel.setBounds(253, 78, 93, 23);
 		contentPane.add(btnCancel);
 		
-		JLabel lblNewPrice = new JLabel("请输入该商品新的单位价格");
-		lblNewPrice.setFont(new Font("宋体", Font.PLAIN, 14));
-		lblNewPrice.setBounds(60, 24, 200, 37);
+		JLabel lblNewPrice = new JLabel("请输入该商品新的单位价格(0<price<=9999.99)");
+		lblNewPrice.setFont(new Font("宋体", Font.PLAIN, 12));
+		lblNewPrice.setBounds(22, 24, 262, 37);
 		contentPane.add(lblNewPrice);
 		
 		textField = new JTextField();
@@ -80,6 +80,15 @@ public class NewPriceFrame extends JFrame {
 	    	Matcher matcher=pattern.matcher(textField.getText());
 	    	if(matcher.find()){
 	    		newPrice=Double.parseDouble(textField.getText());
+	    		if(newPrice>9999.99){
+	    			newPrice=9999.99;
+		    		JOptionPane.showMessageDialog(
+	                        null,
+	                        "价格溢出，自动定价为9999.99",
+	                        "提示",
+	                        JOptionPane.INFORMATION_MESSAGE
+	                );
+	    		}
 	    		new Thread(()->{
 	                URI getUri,postUri;
 					try {
