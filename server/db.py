@@ -164,9 +164,9 @@ class DBHelper:
         ses = self._db.session
         filter_args = [Sale.id == SaleDetail.sale_id]
         if start:
-            filter_args.append(Sale.date > start)
+            filter_args.append(Sale.date >= start)
         if end:
-            filter_args.append(Sale.date < end)
+            filter_args.append(Sale.date <= end)
         try:
             tmp = ses.query(Sale.id,
                             Sale.date,
