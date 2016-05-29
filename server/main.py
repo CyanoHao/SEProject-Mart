@@ -63,6 +63,17 @@ def addProductInfo():
     return "Success"
 
 
+@app.route('/Mart/v1.0/echo-json', methods=['POST'])
+def echoJson():
+    json = request.json
+    if not json:
+        return error_handler("Need json data", 404)
+    f = open("/tmp/echo-json", "w+")
+    f.write(str(json))
+    f.close
+    return "Success"
+
+
 @app.route('/Mart/v1.0/product/update', methods=['POST'])
 @auth.login_requied(1)
 def updateProductInfo():
