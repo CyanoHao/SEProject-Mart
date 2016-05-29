@@ -1,5 +1,6 @@
 import ConfigParser
-import sys, os
+import sys
+import os
 
 
 class ServerConfig:
@@ -95,4 +96,4 @@ class ConfigHelper:
     def db_URI(self):
         return "mysql+mysqlconnector://" + self._db.login_name +\
             ":" + self._db.password + "@" + self._db.host + \
-            ":" + self._db.port + "/" + self._db.name
+            ":" + self._db.port + "/" + self._db.name + "?charset=utf8"
