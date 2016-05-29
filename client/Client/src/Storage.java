@@ -1,12 +1,14 @@
 import java.awt.Dimension;
 import java.util.Date;
 
+import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Font;
@@ -43,6 +45,7 @@ public class Storage extends JFrame {
 	private JButton btnPrintStore;
 	private UneditableTableModel tableModel;
 	private JSONObject productInfo;
+	private JButton btnAdd;
 
 	public Storage() {
 		setTitle("库存管理");
@@ -53,7 +56,7 @@ public class Storage extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnAdd = new JButton("新增入库");
+		btnAdd = new JButton("新增入库");
 		btnAdd.setFont(new Font("宋体", Font.PLAIN, 12));
 		btnAdd.setBounds(186, 261, 93, 23);
 		contentPane.add(btnAdd);
@@ -199,6 +202,179 @@ public class Storage extends JFrame {
                 return;
 	    	}
 		});
+		
+		btnAdd.addActionListener(e->{
+	    	String inputId=JOptionPane.showInputDialog(
+                    null,
+                    "请输入入库商品12位ID",
+                    "输入ID",
+                    JOptionPane.QUESTION_MESSAGE
+            );
+	    	Pattern idPattern=Pattern.compile("^[0-9]{12}$");
+	    	Matcher idMatcher=idPattern.matcher(inputId);
+	    	if(!idMatcher.find()){
+                JOptionPane.showMessageDialog(
+                        null,
+                        "非法的ID格式!",
+                        "操作失败",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+	    	}
+	    	boolean isOldProduct=productInfo.has(inputId);
+	    	
+    	    JTextField nameField = new JTextField(10);
+    	    JTextField amountField = new JTextField(5);
+    	    JTextField priceField = new JTextField(5);
+    		JPanel myPanel = new JPanel();
+    		if(isOldProduct==false){
+        		myPanel.add(new JLabel("新商品名称:"));
+        		myPanel.add(nameField);
+    		}
+    		else{
+    			String thisName=productInfo.getJSONObject(inputId).getString("name");
+    			myPanel.add(new JLabel("商品名称: "+thisName));
+    		}
+    		myPanel.add(Box.createHorizontalStrut(15));
+    		myPanel.add(new JLabel("入库数量(>0且为整数):"));
+    		myPanel.add(amountField);
+    		myPanel.add(Box.createHorizontalStrut(15));
+    		myPanel.add(new JLabel("进价(>=0):"));
+    		myPanel.add(priceField);
+    		int result = JOptionPane.showConfirmDialog(null, myPanel, 
+    	               "输入入库信息", JOptionPane.OK_CANCEL_OPTION);
+    	    if (result == JOptionPane.OK_OPTION) {
+    	    	if(isOldProduct==false){
+        	        if("".equals(nameField.getText())){
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "商品名称不能为空!",
+                                "操作失败",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+        	        }
+    	    	}
+    	    	Pattern pattern=Pattern.compile("^(?:[1-9][0-9]*)$");
+    	    	Matcher matcher=pattern.matcher(amountField.getText());
+    	    	if(!matcher.find()){
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "非法的入库数量(>0且为整数)!",
+                            "操作失败",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+    	    	}
+    	    	Pattern patternPrice=Pattern.compile("(^\\d+$)|(^\\d+(\\.\\d+)?$)");
+    	    	Matcher matcherPrice=patternPrice.matcher(priceField.getText());
+    	    	if(!matcherPrice.find()){
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "非法的进价(>=0)!",
+                            "操作失败",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+    	    	}
+    	    	Integer amount=Integer.parseInt(amountField.getText());
+    	    	Double price=Double.parseDouble(String.format("%.2f", Double.parseDouble(priceField.getText())));
+    	    	String name=null;
+    	    	if(isOldProduct==false){
+    	    		name=nameField.getText();
+        	    	//update local product table
+        	    	JSONObject newJo=new JSONObject().put("name", name).put("price", -1.00);
+        	    	productInfo.put(inputId, newJo);
+        	    	//update local tableModel
+        	    	Object[] newItem={inputId,name,String.format("%.1f", (double)amount),"未定价"};
+        	    	this.tableModel.addRow(newItem);
+        	    	//update remote product table
+        	    	try{
+    					URI postUri = new URIBuilder()
+    						.setScheme("http")
+    						.setUserInfo(Main.username, Main.passwd)
+    						.setHost("devel.cyano.cn")
+    						.setPort(10001)
+    						.setPath("/Mart/v1.0/product/add")
+    						.build();
+    					HttpPost postOut=new HttpPost(postUri);
+    					CloseableHttpClient http4updateProd = HttpClients.createDefault();
+    					JSONObject jo=new JSONObject().put(inputId, newJo);
+    					StringEntity se = new StringEntity(jo.toString(),"utf-8");
+    					se.setContentEncoding("UTF-8");
+    					se.setContentType("application/json");
+    					postOut.setEntity(se);
+    					HttpResponse res = http4updateProd.execute(postOut);
+        	    	} catch (Exception e3){
+        	    		e3.printStackTrace();
+        	    	}
+    	    	}
+    	    	else{
+    	    		name=productInfo.getJSONObject(inputId).getString("name");
+    	    		Double gettedPrice=productInfo.getJSONObject(inputId).getDouble("price");
+    	    		boolean isExist=false;
+    	    		int index=0;
+    	    		for(index=0;index<storeTable.getRowCount();index++){
+    	    			if(inputId.equals(tableModel.getValueAt(index,0).toString())){
+    	    				isExist=true;
+    	    				break;
+    	    			}
+    	    		}
+    	    		if(isExist==false){
+    	    			String priceString=null;
+    	    			if(gettedPrice<0){
+    	    				priceString="未定价";
+    	    			}
+    	    			else{
+    	    				priceString=String.format("%.2f", (double)amount*gettedPrice);
+    	    			}
+            	    	Object[] newItem={inputId,name,String.format("%.1f", (double)amount),priceString};
+            	    	this.tableModel.addRow(newItem);
+    	    		}
+    	    		else{
+    	    			Double oldamount=Double.parseDouble(tableModel.getValueAt(index,2).toString());
+    	    			Double newamount=oldamount+(double)amount;
+    	    			String priceString=null;
+    	    			if(gettedPrice<0){
+    	    				priceString="未定价";
+    	    			}
+    	    			else{
+    	    				priceString=String.format("%.2f", newamount*gettedPrice);
+    	    			}
+    	    			this.tableModel.setValueAt(String.format("%.1f", newamount), index, 2);
+    	    			this.tableModel.setValueAt(priceString, index, 3);
+    	    		}
+    	    	}
+    	    	//update remote inventory table
+    	    	JSONArray ja=new JSONArray().put(new JSONObject().put("prod_id", inputId).put("price", price).put("num", amount));
+    	    	try{
+    	    		URI postUri = new URIBuilder()
+						.setScheme("http")
+						.setUserInfo(Main.username, Main.passwd)
+						.setHost("devel.cyano.cn")
+						.setPort(10001)
+						.setPath("/Mart/v1.0/inventory/add")
+						.build();
+    	    		HttpPost postOut=new HttpPost(postUri);
+    	    		StringEntity se = new StringEntity(ja.toString());
+    	    		CloseableHttpClient http4updateInvent = HttpClients.createDefault();
+    	    		se.setContentEncoding("UTF-8");
+    	    		se.setContentType("application/json");
+    	    		postOut.setEntity(se);
+    	    		HttpResponse res = http4updateInvent.execute(postOut);
+    	    	} catch (Exception e4){
+    	    		e4.printStackTrace();
+    	    	}
+                JOptionPane.showMessageDialog(
+                        null,
+                        "入库成功!",
+                        "操作成功",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+    	        //TODO
+	    	    
+	    	}
+		});
 	}
 	class GetInventoryCountThread extends Thread{
 		public void run(){
@@ -250,4 +426,6 @@ public class Storage extends JFrame {
 			}
 		}
 	}
+	
+	
 }
