@@ -236,7 +236,7 @@ public class Storage extends JFrame {
     			myPanel.add(new JLabel("商品名称: "+thisName));
     		}
     		myPanel.add(Box.createHorizontalStrut(15));
-    		myPanel.add(new JLabel("入库数量(>0且为整数):"));
+    		myPanel.add(new JLabel("入库数量(0<amount<100000 且为整数):"));
     		myPanel.add(amountField);
     		myPanel.add(Box.createHorizontalStrut(15));
     		myPanel.add(new JLabel("进价(>=0):"));
@@ -257,10 +257,10 @@ public class Storage extends JFrame {
     	    	}
     	    	Pattern pattern=Pattern.compile("^(?:[1-9][0-9]*)$");
     	    	Matcher matcher=pattern.matcher(amountField.getText());
-    	    	if(!matcher.find()){
+    	    	if(!(matcher.find() && Integer.parseInt(amountField.getText())<100000)){
                     JOptionPane.showMessageDialog(
                             null,
-                            "非法的入库数量(>0且为整数)!",
+                            "非法的入库数量(0<amount<100000 且为整数)!",
                             "操作失败",
                             JOptionPane.ERROR_MESSAGE
                     );
